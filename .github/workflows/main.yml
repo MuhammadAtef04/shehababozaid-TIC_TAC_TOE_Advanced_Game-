@@ -18,6 +18,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y qtbase5-dev qt5-qmake g++ make
 
+    - name: List files for debug
+      run: ls -l
+
     - name: build
       run: |
         qmake "TIC_TAC_TOE_FINAL - game.pro"
