@@ -18,6 +18,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y qtbase5-dev qt5-qmake g++ make
 
+    - name: Debug - List .pro files
+      run: find . -name "*.pro"
+
     - name: List files and folders (root)
       run: ls -l
 
@@ -26,15 +29,25 @@ jobs:
 
     - name: Build main project
       run: |
-        qmake TIC_TAC_TOE_FINAL.pro
-        make
+        # Adjust the path if your .pro file is in a subdirectory
+        if [ -f TIC_TAC_TOE_FINAL.pro ]; then
+          qmake TIC_TAC_TOE_FINAL.pro
+          make
+        else
+          echo "TIC_TAC_TOE_FINAL.pro not found"
+          exit 1
+        fi
 
     - name: Build and run tests
       run: |
-        qmake TIC_TAC_TOE_FINAL_test.pro
-        make
-        [ -f ./test_components ] && ./test_components || echo "test_components not found"
-        [ -f ./test_ai ] && ./test_ai || echo "test_ai not found"
+        if [ -f TIC_TAC_TOE_FINAL_test.pro ]; then
+          qmake TIC_TAC_TOE_FINAL_test.pro
+          make
+          [ -f ./test_components ] && ./test_components || echo "test_components not found"
+          [ -f ./test_ai ] && ./test_ai || echo "test_ai not found"
+        else
+          echo "TIC_TAC_TOE_FINAL_test.pro not found"
+        fi
 
     - name: Deploy
       run: echo "Deployment Done"
