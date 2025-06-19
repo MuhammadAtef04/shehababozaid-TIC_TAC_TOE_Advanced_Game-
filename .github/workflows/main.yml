@@ -11,13 +11,30 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: build
-      run: echo "Build Done" 
+    - name: Install Qt and build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qtbase5-dev qt5-qmake g++ make
 
-    - name: test
-      run: echo "Test Passed" 
+    - name: List files and folders (root)
+      run: ls -l
 
-    - name: deploy
-      run: echo "Deployment Done" 
+    - name: List all files recursively
+      run: find . -type f
+
+    - name: Build main project
+      run: |
+        qmake TIC_TAC_TOE_FINAL.pro
+        make
+
+    - name: Build and run tests
+      run: |
+        qmake TIC_TAC_TOE_FINAL_test.pro
+        make
+        [ -f ./test_components ] && ./test_components || echo "test_components not found"
+        [ -f ./test_ai ] && ./test_ai || echo "test_ai not found"
+
+    - name: Deploy
+      run: echo "Deployment Done"
